@@ -1,0 +1,5 @@
+(executables
+ (names demo)
+  (public_names demo)
+  (modules demo)
+  (libraries graphics ysc2229-geometry))

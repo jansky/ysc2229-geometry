@@ -1,0 +1,6 @@
+(library
+ (name ysc2229_geometry)
+ (public_name ysc2229-geometry)
+  (wrapped false)
+  (libraries graphics)
+  (synopsis "Elementary algorithms of Computational Geometry"))
