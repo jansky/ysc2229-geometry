@@ -2,5 +2,5 @@
  (name ysc2229_geometry)
  (public_name ysc2229-geometry)
   (wrapped false)
-  (libraries graphics)
+  (libraries graphics ysc2229-part-one ysc2229-part-two core_kernel batteries) 
   (synopsis "Elementary algorithms of Computational Geometry"))
