@@ -90,19 +90,17 @@ open TestSegments
 (*        Testing Convex Hulls           *)
 (*****************************************)
 
-(* open ConvexHulls
- * 
- * let test_random_ch n = 
- *   let ps = gen_random_points n in 
- *   let ch = convex_hull ps in
- *   assert (is_convex ch);
- *   assert (List.for_all (point_within_polygon ch) ps)
- * 
- * 
- * let%test _ = 
- *   for _ = 0 to 100 do
- *     test_random_ch 50
- *   done;
- *   true *)
+open ConvexHulls
+
+let test_random_ch n = 
+  (* TODO: implement me! *)
+  ()
+
+
+let%test _ = 
+  for _ = 0 to 100 do
+    test_random_ch 50
+  done;
+  true
   
 

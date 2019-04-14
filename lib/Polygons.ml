@@ -57,7 +57,7 @@ let polygon_of_int_pairs l =
 
 let shift_polygon (dx, dy) pol = 
   (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  pol
 
 
 
