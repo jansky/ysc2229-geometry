@@ -24,21 +24,15 @@ SOFTWARE.
 (* OCaml library *)
 open Graphics
 
-(* Local project library *)
-open Shapes
-
-let rec wait_until_q_pressed t =
+let rec wait_until_q_pressed _ =
   let event = wait_next_event [Key_pressed] in
   if event.key == 'q' 
   then exit 0
-  else wait_until_q_pressed t
+  else wait_until_q_pressed ()
 
 let () =
-  (*
-  open_graph " 1000x800";
-  wait_until_q_pressed true
-  *)
-  ()
+  open_graph " 800x600";
+  wait_until_q_pressed ()
 
   
     

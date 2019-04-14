@@ -20,44 +20,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *)
 
-(******************************************)
-(*    Segments and operations on them     *)
-(******************************************)
+open Graphics
 
-module Segments = struct
-  open Graphics
+let origin = (400, 300)
 
-(*
+let go_to_origin _ =
+  let x = fst origin in
+  let y = snd origin in
+  moveto x y;
+  set_color black
 
+let draw_axes _ =
+  let x = fst origin in
+  let y = snd origin in
+  set_color green;
+  moveto 0 y;
+  lineto (x * 2) y;
+  moveto x 0;
+  lineto x (y * 2);
+  moveto x y;
+  set_color black
 
+let mk_screen _ = 
+  open_graph " 800x600";
+  draw_axes ()
+    
+let clear_screen _ =
+  clear_graph ();
+  draw_axes ()
 
-*)
-
-
-end
-
-
-(******************************************)
-(*             Polygons                   *)
-(******************************************)
-
-module Polygons = struct
-  open Graphics
-
-
-
-
-end
-
-
-
-
-(* Drawing a rectangle *)
-(* let draw_rect x0 y0 w h = 
- *   let (a,b) = Graphics.current_point() 
- *   and x1 = x0+w and y1 = y0+h 
- *   in
- *   Graphics.moveto x0 y0; 
- *   Graphics.lineto x0 y1; Graphics.lineto x1 y1;  
- *   Graphics.lineto x1 y0; Graphics.lineto x0 y0; 
- *   Graphics.moveto a b *)
