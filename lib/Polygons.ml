@@ -56,10 +56,9 @@ let polygon_of_int_pairs l =
       Point (float_of_int x, float_of_int y)) l
 
 let shift_polygon (dx, dy) pol = 
-  (* TODO: implement me *)
-  pol
-
-
+  List.map (function (Point (x, y)) ->
+    Point (x +. dx, y +. dy)) 
+    pol
 
 (******************************************)
 (*             Render Polygons            *)
@@ -162,14 +161,17 @@ end
 (******************************************)
 
 let resize_polygon k pol = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
-(* What if k is negative? *)
+  List.map (function Point (x, y) -> 
+    Point (x *. k, y *. k)) pol
 
 let rotate_polygon pol p0 angle = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  pol |> 
+  List.map (fun p -> p -- p0) |>
+  List.map polar_of_cartesian |>
+  List.map (function Polar (r, phi) ->
+    Polar (r, phi +. angle)) |>
+  List.map cartesian_of_polar |>
+  List.map (fun p -> p ++ (get_x p0, get_y p0))
 
 (******************************************)
 (*         Queries about polygons         *)
@@ -179,8 +181,7 @@ let rotate_polygon pol p0 angle =
 (* Checking whether a polygon is convex *)
 let is_convex pol = 
   let triplets = all_triples pol in
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  List.for_all (fun (p1, p2, p3) -> direction p1 p2 p3 <= 0) triplets
 
 
 (* TODO: Check the tests *)
@@ -198,8 +199,9 @@ let edges pol =
 let polygons_touch_or_intersect pol1 pol2 =
   let es1 = edges pol1 in
   let es2 = edges pol2 in
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  List.exists (fun e1 -> 
+    List.exists (fun e2 -> 
+          segments_intersect e1 e2) es2) es1
 
 (* Question: what is the complexity of this? *)
 
@@ -244,8 +246,15 @@ let ray_segment_intersection ray seg =
       else None
     else None
   else begin
-    (* TODO: implement me *)
-    raise (Failure "Implement me!")
+    let t = (cross_product (q -- p) r) /. (cross_product s r) in
+    let u = (cross_product (p -- q) s) /. (cross_product r s) in
+    if u >=~ 0. && t >=~ 0. && t <=~ 1.
+    then 
+      let Point (sx, sy) = s in
+      let z = p ++ (sx *.t, sy *. t) in
+      Some z
+    else
+      None
   end
 
 

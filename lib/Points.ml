@@ -25,8 +25,7 @@ SOFTWARE.
 let eps = 0.0000001
 
 let (=~=) x y = 
-  (* TODO: implement me *)
-  false
+  abs_float (x -. y) < eps
 
 let (<=~) x y = x =~= y || x < y
 
@@ -75,8 +74,7 @@ end
 
 (* Move the point *)
 let (++) (Point (x, y)) (dx, dy) = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  Point (x +. dx, y +. dy)
 
 
 
@@ -95,9 +93,7 @@ TODO:
 (************************************)
 
 let vec_length (Point (x, y)) = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
+  sqrt (x *. x +. y *. y)
     
 let draw_vector (Point (x, y)) = 
   let ix = int_of_float x + fst origin in 
@@ -108,8 +104,7 @@ let draw_vector (Point (x, y)) =
 
 (* Subtract vectors *)
 let (--) (Point (x1, y1)) (Point (x2, y2)) = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  Point (x1 -. x2, y1 -. y2)
 
 
 
@@ -125,8 +120,7 @@ let (--) (Point (x1, y1)) (Point (x2, y2)) =
 *)
 
 let dot_product (Point (x1, y1)) (Point (x2, y2)) = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  x1 *. x2 +. y1 *. y2
 
 
 let angle_between v1 v2 =
@@ -134,8 +128,10 @@ let angle_between v1 v2 =
   let l2 = vec_length v2 in 
   if is_zero l1 || is_zero l2 then 0.0
   else
-    (* TODO: implement me *)
-    raise (Failure "Implement me!")
+    let p = dot_product v1 v2 in
+    let cos_phi = p /. (l1 *. l2) in
+    assert (abs_float cos_phi <=~ 1.);
+    acos cos_phi
 
  
 (* To polar representation *)
@@ -146,18 +142,19 @@ type polar = Polar of (float * float)
 
 let polar_of_cartesian ((Point (x, y)) as p) = 
   let r = vec_length p in
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
+  let phi = atan2 y x in 
+  let phi' = if phi =~= ~-.pi then phi +. 2. *. pi else phi in
+  Polar (r, phi') 
 
 let cartesian_of_polar (Polar (r, phi)) = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
+  let x = r *. cos phi in
+  let y = r *. sin phi in
+  Point (x, y)
 
 let rotate_by_angle p a =
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  let Polar (r, phi) = polar_of_cartesian p in
+  let p' = Polar (r, phi +. a) in
+  cartesian_of_polar p'
 
 
 (*
@@ -175,9 +172,7 @@ TODO: Graphical experiments with the angles
 (************************************)
 
 let cross_product (Point (x1, y1)) (Point (x2, y2)) = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
+  x1 *. y2 -. x2 *. y1
 
 let sign p = 
   if p =~= 0. then 0
@@ -208,9 +203,9 @@ let rotate_to p1 p2 =
  0 - no turn
 
 *)
-let direction p0 p1 p2 = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+let direction p1 p2 p3 = 
+  cross_product (p3 -- p1) (p2 -- p1) |> sign
+
 
 
 (*
@@ -268,10 +263,10 @@ let gen_random_segment f =
 
 let gen_random_point_on_segment seg = 
   let (p1, p2) = seg in
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
-
+  let Point (dx, dy) as v = p2 -- p1 in
+  let t = Random.float 1. in
+  let z = p1 ++ (dx *. t, dy *. t) in
+  z
 
 (******************************************)
 (*              Collinearity              *)
@@ -281,22 +276,24 @@ let gen_random_point_on_segment seg =
 let collinear s1 s2 = 
   let (p1, p2) = s1 in
   let (p3, p4) = s2 in 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
+  let d1 = direction p3 p4 p1 in
+  let d2 = direction p3 p4 p2 in
+  d1 = 0 && d2 = 0
   
 (* Checking if a point is on a segment *)
 let point_on_segment s p =
   let (a, b) = s in
-  if (* TODO: Implement me! *)
-    false
+  if not (collinear (a, p) (p, b))
   then false
   else 
     let Point (ax, ay) = a in
     let Point (bx, by) = b in
     let Point (px, py) = p in
-    (* TODO: implement me *)
-    false
+    min ax bx <=~ px && 
+    px <=~ max ax bx &&
+    min ay by <=~ py && 
+    py <=~ max ay by
+
 
 (*
 TODO: See tests
@@ -327,8 +324,12 @@ let segments_intersect s1 s2 =
   else
     let (p1, p2) = s1 in
     let (p3, p4) = s2 in
-    (* TODO: implement me *)
-    raise (Failure "Implement me!")
+    let d1 = direction p3 p4 p1 in
+    let d2 = direction p3 p4 p2 in
+    let d3 = direction p1 p2 p3 in
+    let d4 = direction p1 p2 p4 in
+    (d1 < 0 && d2 > 0 || d1 > 0 && d2 < 0) &&
+    (d3 < 0 && d4 > 0 || d3 > 0 && d4 < 0)
 
 
 (******************************************)
@@ -357,8 +358,12 @@ let find_intersection s1 s2 =
      (p1 + t r) × s = (p3 + u s) × s,
       t = (p3 − p1) × s / (r × s)
     *)
-    (* TODO: implement me *)
-    raise (Failure "Implement me!")
+    let t = (cross_product (p3 -- p1) s) /. (cross_product r s) in
+    let Point (rx, ry) = r in 
+    let z = p1 ++ (rx *. t, ry *. t) in
+    Some z
+
+
 
 
 (* 

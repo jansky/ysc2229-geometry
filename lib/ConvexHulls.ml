@@ -66,9 +66,12 @@ let axis_y_sorter (Point (x1, y1)) (Point (x2, y2)) =
 
 (* Sort by polar angle wrt p0 *)
 let polar_angle_sorter p0 p1 p2 = 
-  (* TODO: Implement me! *)
-  raise (Failure "Implement me!")
-
+  let Polar (r1, a1) = p1 -- p0 |> polar_of_cartesian in
+  let Polar (r2, a2) = p2 -- p0 |> polar_of_cartesian in
+  if a1 < a2 then -1 else if a1 > a2 then 1 
+  else if r1 < r2 then -1 else if r1 > r2 then 1 
+  else 0
+    
 module CHStack = StackX(ListBasedStack)
 
 (* Graham's Scan *)
@@ -89,17 +92,16 @@ let convex_hull points =
   
   (* Check that p doesn't introduce non-left turn *)
   let non_left_turn p = 
-    (* TODO: Implement me! *)
-    raise (Failure "Implement me!")
-
+    let q1 = next_to_top s |> get_exn in
+    let q2 = top s |> get_exn in
+    direction q1 q2 p >= 0
   in
   
   (* Main algorithm *)
   List.iter (fun p ->
       (* What is the condition wrt. turns? *)
-      while false do
-        (* What should we do to the stack *)
-        ()
+      while non_left_turn p do
+        pop s
       done;
       push s p) rest;
   
