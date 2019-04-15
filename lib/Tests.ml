@@ -30,60 +30,59 @@ open TestSegments
 
 (* Collinearity *)
 
-(* let%test _ = 
- *   collinear s3 s4 *)
+let%test _ = 
+  collinear s3 s4
 
-(* let%test _ = 
- *   not @@ collinear s1 s2 &&
- *   not @@ collinear s3 s2 &&
- *   not @@ collinear s1 s3 &&
- *   not @@ collinear s2 s4 *)
+let%test _ = 
+  not @@ collinear s1 s2 &&
+  not @@ collinear s3 s2 &&
+  not @@ collinear s1 s3 &&
+  not @@ collinear s2 s4
 
 (* Point on a segment *)
 
-(* let%test _ =
- *   let seg = (r, p) in
- *   point_on_segment seg t
- * 
- * let%test _ =
- *   let seg = (r, s) in
- *   not @@ point_on_segment seg t
- * 
- * (\* Random test for point on segment *\)
- * let%test _ =
- *   for _ = 1 to 100 do
- *     let seg = gen_random_segment 100. in 
- *     let p = gen_random_point_on_segment seg in
- *     assert (point_on_segment seg p)
- *   done;
- *   true *)
+let%test _ =
+  let seg = (r, p) in
+  point_on_segment seg t
+
+let%test _ =
+  let seg = (r, s) in
+  not @@ point_on_segment seg t
+
+(* Random test for point on segment *)
+let%test _ =
+  for _ = 1 to 100 do
+    let seg = gen_random_segment 100. in 
+    let p = gen_random_point_on_segment seg in
+    assert (point_on_segment seg p)
+  done;
+  true
 
 (* Intersect non-trivially *)
+let%test _ = 
+  intersect_as_collinear s3 s4
 
-(* let%test _ = 
- *   intersect_as_collinear s3 s4
- * 
- * (\* Intersection point *\)
- * let%test _ =
- *   let p = Week_01.get_exn @@ find_intersection s5 s6 in
- *   get_x p =~= 0. && get_y p =~= 0. *)
+(* Intersection point *)
+let%test _ =
+  let p = Week_01.get_exn @@ find_intersection s5 s6 in
+  get_x p =~= 0. && get_y p =~= 0.
 
 (*****************************************)
 (*        Tests with polygons            *)
 (*****************************************)
 
-(* open Polygons
- * open TestPolygons
- * 
- * let%test _ = is_convex triangle
- * 
- * let%test _ = is_convex square
- * 
- * let%test _ = is_convex convexPoly2
- * 
- * let%test _ = is_convex convexPoly3
- * 
- * let%test _ = not (is_convex kittyPolygon) *)
+open Polygons
+open TestPolygons
+
+let%test _ = is_convex triangle
+
+let%test _ = is_convex square
+
+let%test _ = is_convex convexPoly2
+
+let%test _ = is_convex convexPoly3
+
+let%test _ = not (is_convex kittyPolygon)
   
 
 (*****************************************)
@@ -93,8 +92,10 @@ open TestSegments
 open ConvexHulls
 
 let test_random_ch n = 
-  (* TODO: implement me! *)
-  ()
+  let ps = gen_random_points n in 
+  let ch = convex_hull ps in
+  assert (is_convex ch);
+  assert (List.for_all (point_within_polygon ch) ps)
 
 
 let%test _ = 

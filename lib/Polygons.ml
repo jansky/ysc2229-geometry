@@ -56,9 +56,8 @@ let polygon_of_int_pairs l =
       Point (float_of_int x, float_of_int y)) l
 
 let shift_polygon (dx, dy) pol = 
-  (* TODO: implement me *)
-  pol
-
+  List.map (function Point (x, y) ->
+    Point (x +. dx, y +. dy)) pol
 
 
 (******************************************)
@@ -162,14 +161,19 @@ end
 (******************************************)
 
 let resize_polygon k pol = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  List.map (function Point (x, y) ->
+    Point (x *. k, y *. k)) pol
 
 (* What if k is negative? *)
 
 let rotate_polygon pol p0 angle = 
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  pol |>
+  List.map (fun p -> p -- p0) |>
+  List.map polar_of_cartesian |>
+  List.map (function Polar (r, phi) -> 
+      Polar (r, phi +. angle)) |>
+  List.map cartesian_of_polar |>
+  List.map (fun p -> p ++ (get_x p0, get_y p0))
 
 (******************************************)
 (*         Queries about polygons         *)
@@ -178,10 +182,8 @@ let rotate_polygon pol p0 angle =
 
 (* Checking whether a polygon is convex *)
 let is_convex pol = 
-  let triplets = all_triples pol in
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
-
+  all_triples pol |>
+  List.for_all (fun (p1, p2, p3) -> direction p1 p2 p3 <= 0)
 
 (* TODO: Check the tests *)
 
@@ -198,8 +200,9 @@ let edges pol =
 let polygons_touch_or_intersect pol1 pol2 =
   let es1 = edges pol1 in
   let es2 = edges pol2 in
-  (* TODO: implement me *)
-  raise (Failure "Implement me!")
+  List.exists (fun e1 ->
+    List.exists (fun e2 -> 
+          segments_intersect e1 e2) es2) es1
 
 (* Question: what is the complexity of this? *)
 
@@ -219,8 +222,6 @@ let draw_ray ?color:(color = Graphics.black) r =
   let open Graphics in
   let q = p ++ (2000. *. (cos phi), 2000. *. (sin phi)) in
   draw_segment ~color (p, q)
-
-(* ??? What is happening here??? *)
 
 let point_on_ray ray p = 
   let (q, phi) = ray in
@@ -244,8 +245,17 @@ let ray_segment_intersection ray seg =
       else None
     else None
   else begin
-    (* TODO: implement me *)
-    raise (Failure "Implement me!")
+    (* Point on segment *)
+    let t = (cross_product (q -- p) r) /. (cross_product s r) in
+    (* Point on ray *)
+    let u = (cross_product (p -- q) s) /. (cross_product r s) in
+    if u >=~ 0. && t >=~ 0. && t <=~ 1. 
+    then
+      let Point (sx, sy) = s in
+      let z = p ++ (sx *. t, sy *. t) in
+      Some z
+    else
+      None
   end
 
 
@@ -270,16 +280,16 @@ let get_vertex_neighbours pol v =
          else walk (i + 1)
     in walk 1
 
-(* Question how to determine it? *)
-
 (* Get neightbors of a vertex *)
 let neighbours_on_different_sides ray pol p =
   if not (List.mem p pol) then true
   else
     let (a, b) = get_vertex_neighbours pol p in
     let (r, d) = ray in 
-    (* TODO: implement me *)
-    raise (Failure "Implement me!")
+    let s = r ++ (cos d, sin d) in
+    let dir1 = direction r s a in
+    let dir2 = direction r s b in
+    dir1 <> dir2
 
 
 (* Point within a polygon *)
@@ -291,14 +301,20 @@ let point_within_polygon pol p =
      List.exists (fun e -> point_on_segment e p) es then true
   else
     begin
-      let n = 0
-        (* TODO: Computer intersection with edges *)
+      let n = 
+        edges pol |> 
+        List.map (fun e -> ray_segment_intersection ray e) |>
+        List.filter (fun r -> r <> None) |>
+        List.map (fun r -> Week_01.get_exn r) |>
 
-        (* TODO: Remembertouching edges *)
+        (* Touching edges *)
+        uniq |>
 
-        (* TODO: Remember touching vertices *)
+        (* Touching vertices *)
+        List.filter (neighbours_on_different_sides ray pol) |>
 
-        (* TODO: Compute length *)
+        (* Compute length *)
+        List.length
       in
       n mod 2 = 1
     end
