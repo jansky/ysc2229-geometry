@@ -31,11 +31,11 @@ make
 
 ## Using the Project as a Library
 
-Once successfully built, you can install the contents of the Week 8-14
+Once successfully built, you can install the contents of the Week 14
 of YSC2229 as libraries to use in your own projects. Check out the
 example project explaining how to use the libraries from Weeks 1-6:
 
-https://github.com/ilyasergey/ysc2229-geometry
+https://github.com/ilyasergey/ysc2229-part-one
 
 ### Installing the project via opam
 
