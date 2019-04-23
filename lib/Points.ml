@@ -300,11 +300,10 @@ let intersect_as_collinear s1 s2 =
   else
     let (p1, p2) = s1 in
     let (p3, p4) = s2 in
-    (point_on_segment s1 p3 || point_on_segment s1 p4) &&
-    (point_on_segment s2 p1 || point_on_segment s2 p2)
-    ||
-    (point_on_segment s2 p1 || point_on_segment s2 p2) && 
-    (point_on_segment s1 p3 || point_on_segment s1 p4)
+    point_on_segment s1 p3 ||
+    point_on_segment s1 p4 ||
+    point_on_segment s2 p1 ||
+    point_on_segment s2 p2
 
 (* Checking if two segments intersect *)
 let segments_intersect s1 s2 = 
