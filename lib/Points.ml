@@ -316,8 +316,18 @@ let segments_intersect s1 s2 =
     let d2 = direction p3 p4 p2 in
     let d3 = direction p1 p2 p3 in
     let d4 = direction p1 p2 p4 in
-    (d1 < 0 && d2 > 0 || d1 > 0 && d2 < 0) &&
-    (d3 < 0 && d4 > 0 || d3 > 0 && d4 < 0)
+    if (d1 < 0 && d2 > 0 || d1 > 0 && d2 < 0) &&
+       (d3 < 0 && d4 > 0 || d3 > 0 && d4 < 0)
+    then true
+    else if d1 = 0 && point_on_segment s2 p1
+    then true
+    else if d2 = 0 && point_on_segment s2 p3
+    then true
+    else if d3 = 0 && point_on_segment s1 p3
+    then true
+    else if d4 = 0 && point_on_segment s1 p4
+    then true
+    else false
 
 (******************************************)
 (*      Finding intersection points       *)
