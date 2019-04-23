@@ -291,6 +291,22 @@ let neighbours_on_different_sides ray pol p =
     let dir2 = direction r s b in
     dir1 <> dir2
 
+(* Ensure that no points in a list are neighbors of any point in the list *)              
+let neighbours_filter pol points =
+  let rec iter pts acc =
+    match pts with
+    | [] -> acc
+    | v :: tl ->
+       if List.mem v pol then
+         let (neighbour_1, neighbour_2) = get_vertex_neighbours pol v in
+         if List.mem neighbour_1 tl || List.mem neighbour_2 tl
+         then iter tl acc
+         else iter tl @@ v :: acc
+       else
+         iter tl @@ v :: acc
+         
+  in
+  iter points []
 
 (* Point within a polygon *)
 
@@ -312,6 +328,9 @@ let point_within_polygon pol p =
 
         (* Touching vertices *)
         List.filter (neighbours_on_different_sides ray pol) |>
+
+        neighbours_filter pol |>
+          
 
         (* Compute length *)
         List.length

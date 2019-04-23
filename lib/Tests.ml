@@ -98,7 +98,7 @@ let test_random_ch n =
   assert (List.for_all (point_within_polygon ch) ps)
 
 
-let%test _ = 
+let%test _ =
   for _ = 0 to 100 do
     test_random_ch 50
   done;
