@@ -311,13 +311,13 @@ let neighbours_filter pol points =
 (* Point within a polygon *)
 
 let point_within_polygon pol p = 
-  let ray = (p, 0.) in
   let es = edges pol in
   if List.mem p pol ||
      List.exists (fun e -> point_on_segment e p) es then true
   else
     begin
-      let n = 
+      let n angle =
+        let ray = (p, angle) in
         edges pol |> 
         List.map (fun e -> ray_segment_intersection ray e) |>
         List.filter (fun r -> r <> None) |>
@@ -329,13 +329,13 @@ let point_within_polygon pol p =
         (* Touching vertices *)
         List.filter (neighbours_on_different_sides ray pol) |>
 
-        neighbours_filter pol |>
+          neighbours_filter pol |>
           
 
         (* Compute length *)
-        List.length
+          List.length
       in
-      n mod 2 = 1
+      n 0. mod 2 = 1 && n pi mod 2 = 1
     end
 
 (*
